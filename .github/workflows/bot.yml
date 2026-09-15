@@ -3,11 +3,12 @@ name: meclis-belge-bot
 on:
   schedule:
     # TATIL TEMPOSU - 1 Ekim oncesi geri alinacak (saatlik + MAX 12)
-    # Gunde 3 gonderi, Turkiye saatiyle 09:17 / 13:17 / 21:17
-    # GitHub cron UTC calisir; TRT = UTC+3
-    - cron: "17 6 * * *"
-    - cron: "17 10 * * *"
-    - cron: "17 18 * * *"
+    # Gunde 3 gonderi. Hedef TRT 09:17/13:17/21:17.
+    # GitHub zamanlayicisi 40-90 dk geciktigi icin 45 dk one alindi.
+    # UTC yazilir; TRT = UTC+3
+    - cron: "32 5 * * *"
+    - cron: "32 9 * * *"
+    - cron: "32 17 * * *"
   workflow_dispatch:         # elle tetikleme
 
 permissions:
