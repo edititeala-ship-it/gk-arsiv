@@ -8,7 +8,7 @@
 import * as cheerio from "cheerio";
 
 const BASE = "https://www.tbmm.gov.tr";
-const LIST_URL = `${BASE}/Gundem/GelenKagitlarListe`;
+const LIST_URL = process.env.LIST_URL || `${BASE}/Gundem/GelenKagitlarListe`;
 const UA = "meclis-belge-bot/0.1 (+https://github.com/) resmi TBMM verisini aktarir";
 
 async function getHtml(url) {
@@ -18,9 +18,18 @@ async function getHtml(url) {
 }
 
 // Liste: [{ no: 196, date: "10.08.2026", url }] — en yeni önce
+// Boş dizi dönmesi normaldir: yeni yasama yılının başında henüz kâğıt yayımlanmamış olur.
 export async function fetchGelenKagitList() {
   const html = await getHtml(LIST_URL);
   const $ = cheerio.load(html);
+
+  // Sayfa yapısı kontrolü: "Önceki Dönem ve Yasama Yılları" bağlantıları her zaman
+  // vardır, mevcut yıl boş olsa bile. Onlar da yoksa sayfa değişmiş demektir —
+  // boş yasama yılı ile bozuk sayfayı birbirinden ayıran tek işaret bu.
+  if (!$("a[href*='GelenKagitlarListe?']").length) {
+    throw new Error("Gelen Kâğıtlar sayfasının yapısı değişmiş: yasama yılı bağlantıları bulunamadı");
+  }
+
   const items = [];
   $("a[href*='GelenKagitDetay']").each((_, a) => {
     const text = $(a).text().trim(); // "196. GELEN KAĞIT"

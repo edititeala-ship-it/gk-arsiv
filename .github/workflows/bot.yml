@@ -2,13 +2,11 @@ name: meclis-belge-bot
 
 on:
   schedule:
-    # TATIL TEMPOSU - 1 Ekim oncesi geri alinacak (saatlik + MAX 12)
-    # Gunde 3 gonderi. Hedef TRT 09:17/13:17/21:17.
-    # GitHub zamanlayicisi 40-90 dk geciktigi icin 45 dk one alindi.
-    # UTC yazilir; TRT = UTC+3
-    - cron: "32 5 * * *"
-    - cron: "32 9 * * *"
-    - cron: "32 17 * * *"
+    # Genel Kurul tempusu (1 Ekim'den itibaren): saat basi kosu.
+    # Yasama yilinin ilk Gelen Kagidi tatil birikimini tasir (gecen 3 yil: 133, 72, 58
+    # onerge). MAX 2 ile boyle bir yigin 2 gunde erir; normal gunlerde (2-4 onerge)
+    # ayni gun icinde atilir. Yigini daha hizli eritmek icin MAX_POSTS_PER_RUN artirilir.
+    - cron: "17 * * * *"
   workflow_dispatch:         # elle tetikleme
 
 permissions:
@@ -38,7 +36,7 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-          MAX_POSTS_PER_RUN: "1"
+          MAX_POSTS_PER_RUN: "2"
           POST_GAP_SECONDS: "150"
         run: node src/run.js
 
