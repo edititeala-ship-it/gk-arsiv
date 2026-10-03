@@ -57,35 +57,48 @@ function htmlToLines(html) {
   return text.split("\n").map((s) => s.replace(/\s+/g, " ").trim()).filter(Boolean);
 }
 
-const ENTRY_RE = /^(\d+)\.-\s*(.+?)\s*\((10\/\d+)\)\s*\(Başkanlığa geliş tarihi:\s*([\d.]+)\)/i;
+// Botun izledigi onerge turleri. Baslik Gelen Kagit sayfasindaki bolum basligidir;
+// tekil/cogul yazilabildigi icin ikisi de kabul edilir. Esas no on eki bolumden
+// belirlenir (arastirma 10/, genel gorusme 8/, sorusturma 9/), kodda varsayilmaz.
+export const TURLER = [
+  { baslikRe: /^Meclis Araştırması Önerge(si|leri)$/i, etiket: "Meclis araştırması önergesi" },
+  { baslikRe: /^Genel Görüşme Önerge(si|leri)$/i,      etiket: "Genel görüşme önergesi" },
+  { baslikRe: /^Meclis Soruşturması Önerge(si|leri)$/i, etiket: "Meclis soruşturması önergesi" },
+];
 
-// Detay: bir Gelen Kâğıt içindeki Meclis araştırması önergeleri
-export async function fetchArastirmaOnergeleri(kagit) {
+const ENTRY_RE = /^(\d+)\.-\s*(.+?)\s*\((\d+\/\d+)\)\s*\(Başkanlığa geliş tarihi:\s*([\d.]+)\)/i;
+
+// Detay: bir Gelen Kagit icindeki butun izlenen onergeler, sayfadaki sirayla
+export async function fetchOnergeler(kagit) {
   const html = await getHtml(kagit.url);
   const lines = htmlToLines(html);
-
-  const start = lines.findIndex((l) => /^Meclis Araştırması Önergeleri$/i.test(l));
-  if (start === -1) return [];
-
   const out = [];
-  for (let i = start + 1; i < lines.length; i++) {
-    const line = lines[i];
-    const m = line.match(ENTRY_RE);
-    if (m) {
-      out.push({
-        esasNo: m[3],                       // "10/4478"
-        ozet: m[2].trim(),                  // TBMM'nin kendi özeti, aynen
-        gelisTarihi: normDate(m[4]),        // "05.08.2026"
-        gelenKagitNo: kagit.no,
-        gelenKagitTarihi: kagit.date,
-        gelenKagitUrl: kagit.url,
-      });
-      continue;
+
+  for (let i = 0; i < lines.length; i++) {
+    const tur = TURLER.find((t) => t.baslikRe.test(lines[i]));
+    if (!tur) continue;
+    for (let j = i + 1; j < lines.length; j++) {
+      const m = lines[j].match(ENTRY_RE);
+      if (m) {
+        out.push({
+          esasNo: m[3],                       // "10/4478", "8/137", ...
+          tip: tur.etiket,
+          ozet: m[2].trim(),                  // TBMM'nin kendi ozeti, aynen
+          gelisTarihi: normDate(m[4]),
+          gelenKagitNo: kagit.no,
+          gelenKagitTarihi: kagit.date,
+          gelenKagitUrl: kagit.url,
+        });
+        continue;
+      }
+      // Numarasiz satir: bolum bitti
+      if (!/^\d+\.-/.test(lines[j])) { i = j - 1; break; }
     }
-    // Numarasız bir satır geldiyse bölüm bitti (bir sonraki başlık)
-    if (out.length && !/^\d+\.-/.test(line)) break;
   }
-  return out;
+  // Gelen Kagit sayfasi bolumleri birden fazla kez icerebiliyor (ekran + yazdirma
+  // kopyasi). Esas no ile tekillestir, sayfadaki ilk gorunum sirasi korunur.
+  const gorulen = new Set();
+  return out.filter((o) => !gorulen.has(o.esasNo) && gorulen.add(o.esasNo));
 }
 
 function normDate(s) {

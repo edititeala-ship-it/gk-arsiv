@@ -1,9 +1,9 @@
 // Kural: tek kelime bile bizim değil. TBMM özeti aynen, altına künye.
-// Sıfat, yorum, etiket yok.
+// Sıfat, yorum, etiket yok. Başlıktaki tür adı Gelen Kâğıt'taki bölüm başlığından gelir.
 
 export function formatOnerge(o) {
   return [
-    `Meclis araştırması önergesi (${o.esasNo})`,
+    `${o.tip} (${o.esasNo})`,
     ``,
     o.ozet,
     ``,

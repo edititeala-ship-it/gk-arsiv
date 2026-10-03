@@ -10,7 +10,7 @@
 // URL'leriyle kaydedilir. Mükerrer gönderi kontrolü esas no (10/xxxx) ile yapılır.
 
 import fs from "node:fs";
-import { fetchGelenKagitList, fetchArastirmaOnergeleri } from "./tbmm.js";
+import { fetchGelenKagitList, fetchOnergeler } from "./tbmm.js";
 import { formatOnerge } from "./format.js";
 import { post } from "./x.js";
 
@@ -56,9 +56,10 @@ async function main() {
 
   let postedNow = 0;
   for (const kagit of pending) {
-    const onergeler = await fetchArastirmaOnergeleri(kagit);
+    const onergeler = await fetchOnergeler(kagit);
     const kalan = onergeler.filter((o) => !state.posted[o.esasNo]);
-    console.log(`No. ${kagit.no} (${kagit.date}): ${onergeler.length} Meclis araştırması önergesi, ${kalan.length} atılmamış`);
+    const dagilim = onergeler.reduce((a, o) => ((a[o.tip] = (a[o.tip] || 0) + 1), a), {});
+    console.log(`No. ${kagit.no} (${kagit.date}): ${onergeler.length} önerge (${Object.entries(dagilim).map(([k, v]) => k + ": " + v).join(", ") || "-"}), ${kalan.length} atılmamış`);
 
     for (const o of kalan) {
       if (postedNow >= MAX_POSTS_PER_RUN) {

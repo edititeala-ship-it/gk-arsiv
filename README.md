@@ -1,6 +1,14 @@
 # Meclis Belge Bot
 
-TBMM'ye verilen **Meclis araştırması önergelerini**, TBMM'nin kendi özetiyle, geldiği gün X'te paylaşan bot.
+TBMM'ye verilen **denetim önergelerini**, TBMM'nin kendi özetiyle, geldiği gün X'te paylaşan bot.
+
+İzlenen türler (Gelen Kâğıt'taki bölüm başlıklarına göre):
+
+- Meclis araştırması önergeleri (`10/xxxx`) — en sık, yılda ~1.400
+- Genel görüşme önergeleri (`8/xxx`) — ayda 3-4, çoğu parti grubu adına
+- Meclis soruşturması önergeleri (`9/xxx`) — çok nadir, yılda birkaç
+
+Türler `src/tbmm.js` içindeki `TURLER` dizisinden yönetilir; yeni tür eklemek bir satır.
 
 ## Kural
 
