@@ -2,10 +2,11 @@ name: meclis-belge-bot
 
 on:
   schedule:
-    # Genel Kurul tempusu (1 Ekim'den itibaren): saat basi kosu.
-    # Yasama yilinin ilk Gelen Kagidi tatil birikimini tasir (gecen 3 yil: 133, 72, 58
-    # onerge). MAX 2 ile boyle bir yigin 2 gunde erir; normal gunlerde (2-4 onerge)
-    # ayni gun icinde atilir. Yigini daha hizli eritmek icin MAX_POSTS_PER_RUN artirilir.
+    # Cron saat basi yazili ama GitHub bunu public repoda yogunlukta atliyor:
+    # olculen gercek siklik ~6.4 saatte bir, gunde ~3.8 kosu. Bu yuzden hiz
+    # kosu sayisiyla degil, kosu basina gonderiyle ayarlaniyor.
+    # 71 onergelik kuyruk icin: 3.8 kosu/gun x 1.5 gun = ~5.7 kosu -> kosu
+    # basina 13 gonderi. 13 x 150 sn = ~33 dk, is zaman asimi 60 dk.
     - cron: "17 * * * *"
   workflow_dispatch:         # elle tetikleme
 
@@ -36,7 +37,7 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-          MAX_POSTS_PER_RUN: "2"
+          MAX_POSTS_PER_RUN: "13"
           POST_GAP_SECONDS: "150"
         run: node src/run.js
 
