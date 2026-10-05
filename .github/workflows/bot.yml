@@ -5,8 +5,10 @@ on:
     # Cron saat basi yazili ama GitHub bunu public repoda yogunlukta atliyor:
     # olculen gercek siklik ~6.4 saatte bir, gunde ~3.8 kosu. Bu yuzden hiz
     # kosu sayisiyla degil, kosu basina gonderiyle ayarlaniyor.
-    # 71 onergelik kuyruk icin: 3.8 kosu/gun x 1.5 gun = ~5.7 kosu -> kosu
-    # basina 13 gonderi. 13 x 150 sn = ~33 dk, is zaman asimi 60 dk.
+    # 71 onergelik kuyruk icin: 3.8 kosu/gun x 3 gun = ~11.4 kosu -> kosu
+    # basina 7 gonderi. Gunde ~27 gonderi; 5 takipcili hesapta 50 gonderi/gun
+    # spam gorunumu riski tasidigi icin bilerek yavas tutuldu.
+    # 7 x 150 sn = ~18 dk, is zaman asimi 60 dk.
     - cron: "17 * * * *"
   workflow_dispatch:         # elle tetikleme
 
@@ -37,7 +39,7 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-          MAX_POSTS_PER_RUN: "13"
+          MAX_POSTS_PER_RUN: "7"
           POST_GAP_SECONDS: "150"
         run: node src/run.js
 
