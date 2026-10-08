@@ -545,7 +545,38 @@
       "id": "2108123422785990905",
       "at": "2026-10-08T09:12:45.860Z",
       "kagit": 1
+    },
+    "10/4573": {
+      "id": "2108233053520744924",
+      "at": "2026-10-08T16:28:23.847Z",
+      "kagit": 1
     }
   },
-  "bitenKagitlar": {}
+  "bitenKagitlar": {
+    "https://www.tbmm.gov.tr/Gundem/GelenKagitDetay/77487b14-4efa-4495-b9d3-01a0f161a9f3": {
+      "no": 1,
+      "date": "01.10.2026",
+      "at": "2026-10-08T16:30:53.937Z"
+    },
+    "https://www.tbmm.gov.tr/Gundem/GelenKagitDetay/7770d919-93cb-4cb4-9d37-01a10ae717ac": {
+      "no": 2,
+      "date": "02.10.2026",
+      "at": "2026-10-08T16:30:54.660Z"
+    },
+    "https://www.tbmm.gov.tr/Gundem/GelenKagitDetay/9067411b-1ce7-4b78-8bcb-01a10ae75964": {
+      "no": 3,
+      "date": "05.10.2026",
+      "at": "2026-10-08T16:30:56.331Z"
+    },
+    "https://www.tbmm.gov.tr/Gundem/GelenKagitDetay/642497ec-8eec-458a-820e-01a110227d32": {
+      "no": 4,
+      "date": "06.10.2026",
+      "at": "2026-10-08T16:30:57.140Z"
+    },
+    "https://www.tbmm.gov.tr/Gundem/GelenKagitDetay/042612b1-5df1-4451-9447-01a116be3ec4": {
+      "no": 5,
+      "date": "07.10.2026",
+      "at": "2026-10-08T16:30:57.285Z"
+    }
+  }
 }
