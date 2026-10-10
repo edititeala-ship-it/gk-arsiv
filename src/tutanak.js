@@ -101,6 +101,7 @@ export async function oylamalariCikar(tutanak) {
 
       out.push({
         sonuc: o.sonuc === "Kabul edilmiştir" ? "KABUL EDİLDİ" : "REDDEDİLDİ",
+        isaret: o.sonuc === "Kabul edilmiştir" ? "✅" : "❌",
         grup: grup || null,
         amac,
         donem: tutanak.donem,

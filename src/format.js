@@ -18,7 +18,7 @@ export function formatOnerge(o) {
 export function formatOylama(o) {
   const kunye = `${o.tarih || ""} · ${o.donem}. Dönem ${o.yasamaYili}. Yasama Yılı, ${o.birlesim}. Birleşim`.trim();
   return [
-    o.sonuc,
+    `${o.isaret} ${o.sonuc}`,
     ``,
     `${o.grup ? o.grup + ", bir" : "Bir"} Meclis araştırması önergesinin Genel Kurul'da öncelikle görüşülmesini istedi:`,
     ``,
