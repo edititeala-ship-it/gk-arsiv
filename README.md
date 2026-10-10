@@ -42,6 +42,37 @@ npm run dry           # tam akış, ama gönderi atmaz (DRY_RUN=1)
 `peek` çıktısı boşsa veya özetler bozuksa TBMM sayfa yapısı değişmiştir; `src/tbmm.js` içindeki
 `ENTRY_RE` ve başlık eşleşmesi düzeltilir, başka yer değişmez.
 
+## İkinci akış: Genel Kurul oylamaları
+
+`src/oylama.js`, Genel Kurul tutanağından **önerge oylamalarını** çeker ve sonucu paylaşır.
+
+Kaynak: TBMM "Son Tutanak" sayfası → `cdn.tbmm.gov.tr/.../Tutanak/<dönem>/<yıl>/<birleşim>/Ham/<guid>.html`
+Düz HTML, AJAX yok. **Kodlama windows-1254** — UTF-8 varsayılırsa Türkçe karakterler bozulur.
+
+Tutanaktaki yapı (28/5 4. Birleşim'de doğrulandı):
+
+```
+<Parti> Grubunun İç Tüzük'ün 19'uncu maddesine göre verilmiş bir önerisi vardır
+Öneri: ... <amaç> amacıyla ... önerilmiştir.
+... (görüşmeler) ...
+Öneriyi oylarınıza sunuyorum: Kabul edenler... Kabul etmeyenler... Kabul edilmemiştir.
+```
+
+Öneri ve oylama belgede sırayla birbirini izler, iç içe geçmez; eşleştirme buna dayanır.
+
+**Kapsam:** yalnızca Meclis araştırması/soruşturması önergelerinin öne alınmasına dair
+öneriler. Gündem ve çalışma düzeni önerileri (ör. AKP'nin birleşim saatleri önerisi)
+alınmaz — blokta `Meclis araştırma(sı) önerge` geçmiyorsa atlanır.
+
+Gönderi metni tutanaktan aynen alınır. Başlıktaki `REDDEDİLDİ` / `KABUL EDİLDİ`,
+tutanaktaki "Kabul edilmemiştir" / "Kabul edilmiştir" ifadesinin karşılığıdır.
+
+Durum `state-oylama.json` içinde tutulur; mükerrer kontrolü birleşim + amaç metni ile.
+Her iki akış da aynı workflow'da çalışır; önerge adımı patlasa bile oylama adımı
+`if: always()` ile çalışır.
+
+Hacim: Genel Kurul haftada ~3 gün toplanıyor, birleşim başına birkaç oylama.
+
 ## Yasama yılı ve numaralandırma
 
 Gelen Kâğıt numaraları **her yasama yılında 1'den yeniden başlar** (yasama yılı 1 Ekim'de

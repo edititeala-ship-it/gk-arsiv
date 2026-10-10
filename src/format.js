@@ -12,3 +12,21 @@ export function formatOnerge(o) {
     `Kaynak: TBMM`,
   ].join("\n");
 }
+
+// Genel Kurul oylamasi. Metnin tamami tutanaktan; basliktaki REDDEDİLDİ/KABUL EDİLDİ
+// tutanaktaki "Kabul edilmemiştir"/"Kabul edilmiştir" ifadesinin karsiligidir.
+export function formatOylama(o) {
+  const kunye = `${o.tarih || ""} · ${o.donem}. Dönem ${o.yasamaYili}. Yasama Yılı, ${o.birlesim}. Birleşim`.trim();
+  return [
+    o.sonuc,
+    ``,
+    `${o.grup ? o.grup + ", bir" : "Bir"} Meclis araştırması önergesinin Genel Kurul'da öncelikle görüşülmesini istedi:`,
+    ``,
+    `"${o.amac}"`,
+    ``,
+    `Oylandı, ${o.sonuc === "KABUL EDİLDİ" ? "kabul edildi" : "kabul edilmedi"}.`,
+    ``,
+    kunye.replace(/^ · /, ""),
+    `Kaynak: TBMM Genel Kurul tutanağı`,
+  ].join("\n");
+}
