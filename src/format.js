@@ -1,22 +1,23 @@
 // Kural: tek kelime bile bizim değil. TBMM özeti aynen, altına künye.
-// Sıfat, yorum, etiket yok. Başlıktaki tür adı Gelen Kâğıt'taki bölüm başlığından gelir.
+// Sıfat, yorum, etiket yok. Tür adı Gelen Kâğıt'taki bölüm başlığından gelir.
+//
+// Özet en üstte: akışta pratikte yalnızca ilk satır okunuyor. Künye üstteyken
+// bütün gönderiler aynı satırla başlıyor ve birbirinin aynı görünüyordu.
 
 export function formatOnerge(o) {
   return [
-    `${o.tip} (${o.esasNo})`,
-    ``,
     o.ozet,
     ``,
-    `Başkanlığa geliş: ${o.gelisTarihi}`,
-    `Gelen Kâğıtlar No. ${o.gelenKagitNo} · ${o.gelenKagitTarihi}`,
+    `${o.tip} · ${o.esasNo}`,
+    `Başkanlığa geliş: ${o.gelisTarihi} · Gelen Kâğıtlar No. ${o.gelenKagitNo} (${o.gelenKagitTarihi})`,
     `Kaynak: TBMM`,
   ].join("\n");
 }
 
-// Genel Kurul oylamasi. Metnin tamami tutanaktan; basliktaki REDDEDİLDİ/KABUL EDİLDİ
-// tutanaktaki "Kabul edilmemiştir"/"Kabul edilmiştir" ifadesinin karsiligidir.
+// Genel Kurul oylaması. Metnin tamamı tutanaktan; başlıktaki REDDEDİLDİ/KABUL EDİLDİ
+// ve yanındaki işaret, tutanaktaki "Kabul edilmemiştir"/"Kabul edilmiştir"in karşılığıdır.
 export function formatOylama(o) {
-  const kunye = `${o.tarih || ""} · ${o.donem}. Dönem ${o.yasamaYili}. Yasama Yılı, ${o.birlesim}. Birleşim`.trim();
+  const kunye = `${o.tarih || ""} · ${o.donem}. Dönem ${o.yasamaYili}. Yasama Yılı, ${o.birlesim}. Birleşim`.replace(/^ · /, "");
   return [
     `${o.isaret} ${o.sonuc}`,
     ``,
@@ -26,7 +27,7 @@ export function formatOylama(o) {
     ``,
     `Oylandı, ${o.sonuc === "KABUL EDİLDİ" ? "kabul edildi" : "kabul edilmedi"}.`,
     ``,
-    kunye.replace(/^ · /, ""),
+    kunye,
     `Kaynak: TBMM Genel Kurul tutanağı`,
   ].join("\n");
 }

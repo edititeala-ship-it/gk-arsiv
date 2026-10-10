@@ -9,7 +9,10 @@ on:
     # basina 7 gonderi. Gunde ~27 gonderi; 5 takipcili hesapta 50 gonderi/gun
     # spam gorunumu riski tasidigi icin bilerek yavas tutuldu.
     # 7 x 150 sn = ~18 dk, is zaman asimi 60 dk.
-    - cron: "17 * * * *"
+    # Yalniz uyanik saatler: UTC 04-19 = TRT 07:00-22:00. GitHub 40-90 dk
+    # geciktirdigi icin en gec ~23:30 TRT'de duser. Gece atilan gonderi
+    # goruntulenme almiyor, ustelik bakiye yakiyordu.
+    - cron: "17 4-19 * * *"
   workflow_dispatch:         # elle tetikleme
 
 permissions:
