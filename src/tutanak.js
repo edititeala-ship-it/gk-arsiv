@@ -55,12 +55,39 @@ function temizleGrup(s) {
 }
 
 function temizleAmac(s) {
-  return s
-    .replace(/^verilen\s+/i, "")
-    .replace(/^\d+\s*(grup numaralı|sıra no\.?lu)\s*/i, "")
-    .replace(/^\(\s*\d+\s*sıra no\.?lu\s*\)\s*/i, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  let t = s.replace(/\s+/g, " ").trim();
+  // Bastaki kayit numarasi kaliplari: "19972 grup numarali", "(20327) grup numarali",
+  // "(1963 sira no.lu)", "1963 sira no.lu"
+  for (let i = 0; i < 3; i++) {
+    t = t
+      .replace(/^verilen\s+/i, "")
+      .replace(/^\(?\s*\d+\s*\)?\s*(grup numaralı|sıra no\.?\s*lu)\s*/i, "")
+      .replace(/^\(\s*\d+\s*(grup numaralı|sıra no\.?\s*lu)\s*\)\s*/i, "")
+      .replace(/^[,;]\s*/, "")
+      .trim();
+  }
+  return t;
+}
+
+// Amac metni: "<verenler> tarafından/Milletvekilinin, <AMAC> amacıyla" kalibi.
+// Verenlerin adi metne sizmasin diye birden cok capa denenir, en sagdaki kullanilir.
+const CAPALAR = [
+  /tarafından\s+/gi,
+  /Milletvekilin(in|ce),\s+/gi,
+  /Milletvekill?erinin,\s+/gi,
+  /['’](n?in|nın|ın|un|ün)[,]?\s+/gi,
+];
+function amacCikar(blok) {
+  const a = blok.lastIndexOf(" amacıyla");
+  if (a < 0) return null;
+  const once = blok.slice(0, a);
+  let en = -1;
+  for (const re of CAPALAR) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(once)) !== null) en = Math.max(en, m.index + m[0].length);
+  }
+  return temizleAmac(en > 0 ? once.slice(en) : once);
 }
 
 // Bir birlesimin tutanagindaki onerge oylamalari
@@ -91,13 +118,8 @@ export async function oylamalariCikar(tutanak) {
       // Gundem ve calisma duzeni onerileri alinmaz.
       if (!/Meclis araştırma(sı)? önerge/i.test(blok)) continue;
 
-      // Amac: "... tarafından <AMAC> amacıyla" kalibi
-      const a = blok.lastIndexOf(" amacıyla");
-      if (a < 0) continue;
-      const once = blok.slice(0, a);
-      const tf = once.lastIndexOf("tarafından ");
-      const amac = temizleAmac(tf >= 0 ? once.slice(tf + 11) : once);
-      if (amac.length < 20) continue;
+      const amac = amacCikar(blok);
+      if (!amac || amac.length < 20) continue;
 
       out.push({
         sonuc: o.sonuc === "Kabul edilmiştir" ? "KABUL EDİLDİ" : "REDDEDİLDİ",
