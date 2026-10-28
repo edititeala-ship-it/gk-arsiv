@@ -21,7 +21,7 @@ export function formatOylama(o) {
   return [
     `${o.isaret} ${o.sonuc}`,
     ``,
-    `${o.grup ? o.grup + ", bir" : "Bir"} Meclis araştırması önergesinin Genel Kurul'da öncelikle görüşülmesini istedi:`,
+    `${o.grup ? o.grup + ", bir" : "Bir"} ${o.tur || "Meclis araştırması önergesi"}nin Genel Kurul'da öncelikle görüşülmesini istedi:`,
     ``,
     `"${o.amac}"`,
     ``,

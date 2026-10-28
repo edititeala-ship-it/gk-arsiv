@@ -3,12 +3,10 @@ name: meclis-belge-bot
 on:
   schedule:
     # Cron saat basi yazili ama GitHub bunu public repoda yogunlukta atliyor:
-    # olculen gercek siklik ~6.4 saatte bir, gunde ~3.8 kosu. Bu yuzden hiz
-    # kosu sayisiyla degil, kosu basina gonderiyle ayarlaniyor.
-    # 71 onergelik kuyruk icin: 3.8 kosu/gun x 3 gun = ~11.4 kosu -> kosu
-    # basina 7 gonderi. Gunde ~27 gonderi; 5 takipcili hesapta 50 gonderi/gun
-    # spam gorunumu riski tasidigi icin bilerek yavas tutuldu.
-    # 7 x 150 sn = ~18 dk, is zaman asimi 60 dk.
+    # olculen gercek siklik ~6.4 saatte bir, gunde ~3.8 kosu.
+    # Hiz artik run.js icinde gunluk hedefle ayarlaniyor: bekleyen onerge sayisi
+    # bir sonraki pazartesiye kalan gune bolunur, gun icinde saate orantili acilir.
+    # MAX_POSTS_PER_RUN yalnizca guvenlik siniri; 20 x 120 sn = 40 dk.
     # Yalniz uyanik saatler: UTC 04-19 = TRT 07:00-22:00. GitHub 40-90 dk
     # geciktirdigi icin en gec ~23:30 TRT'de duser. Gece atilan gonderi
     # goruntulenme almiyor, ustelik bakiye yakiyordu.
@@ -25,7 +23,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
@@ -42,8 +40,9 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-          MAX_POSTS_PER_RUN: "7"
-          POST_GAP_SECONDS: "150"
+          MAX_POSTS_PER_RUN: "20"
+          MAX_POSTS_PER_DAY: "40"
+          POST_GAP_SECONDS: "120"
         run: node src/run.js
 
       - name: Oylamalar
@@ -54,7 +53,8 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
           MAX_POSTS_PER_RUN: "7"
-          POST_GAP_SECONDS: "150"
+          POST_GAP_SECONDS: "120"
+          OYLAMA_LOOKBACK: "4"
         run: node src/oylama.js
 
       - name: state.json commit
